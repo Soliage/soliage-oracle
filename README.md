@@ -9,3 +9,8 @@ This first version of the oracle can keep track of the following:
 The test shows what calls are made. 
 
 
+Quickstart:  
+`yarn install`
+`anchor build`
+
+Launched at CQ9sBC6dELeBFPtRLS3YM9Zw6K91xDG1drnxzcYG9uYS
