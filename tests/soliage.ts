@@ -4,9 +4,12 @@ import { utf8 } from "@project-serum/anchor/dist/cjs/utils/bytes";
 import { BN } from "bn.js";
 import { assert } from "chai";
 import { Soliage } from "../target/types/soliage";
+import fs from "fs";
 
-const nftOwner = new anchor.web3.PublicKey("4RLpP7eio996DqLcSpV2f9mKSXsogSuezJZctmyXzroo")
-const nftMintAddress = new anchor.web3.PublicKey("25PCHCQxv4cdkRFVrkKbcA6FSZr86ca3rxwDtcUJwwDG")
+// @ts-ignore
+const parcelData = JSON.parse(fs.readFileSync(".keys/steward_dev.json"));
+const steward = anchor.web3.Keypair.fromSecretKey(new Uint8Array(parcelData)).publicKey;
+const nftMintAddress = new anchor.web3.PublicKey("25PCHCQxv4cdkRFVrkKbcA6FSZr86ca3rxwDtcUJwwDG");
 
 describe("soliage", () => {
   anchor.setProvider(anchor.AnchorProvider.env());
@@ -24,7 +27,7 @@ describe("soliage", () => {
     );
     console.log("oraclePDA", oraclePDA);
     await program.methods.createOracle(12, 32000).accounts({
-      nftOwner: nftOwner,
+      nftOwner: steward,
       oracleProvider: publicKey,
       nftAddress: nftMintAddress,
       systemProgram:  anchor.web3.SystemProgram.programId,
@@ -34,7 +37,7 @@ describe("soliage", () => {
     console.log(oracleAccount);
     assert.equal(oracleAccount.parcelId, 12);
     assert.equal(oracleAccount.amount, 32000);
-    assert.isTrue(oracleAccount.nftOwner.equals(nftOwner));
+    assert.isTrue(oracleAccount.nftOwner.equals(steward));
     assert.isTrue(oracleAccount.nftAddress.equals(nftMintAddress))
     pda = oraclePDA;
   });
