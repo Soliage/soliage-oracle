@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use std::mem::size_of;
 
-declare_id!("CQ9sBC6dELeBFPtRLS3YM9Zw6K91xDG1drnxzcYG9uYS");
+declare_id!("JCrKhCHMnwwgGByjDntnADS7zmo22petbVYwumn8s2xf");
 
 #[program]
 pub mod soliage {
@@ -35,11 +35,10 @@ pub mod soliage {
 pub struct CreateOracle<'info> {
     #[account(
         init,
-        seeds = [b"oracle".as_ref(), 
-        nft_address.key().as_ref()],
+        seeds = [b"oracle".as_ref(), nft_address.key().as_ref()],
         bump,
         payer = oracle_provider,
-        space = 16 + size_of::<OracleAccount>()
+        space = 8 + size_of::<OracleAccount>()
     )]
     pub oracle: Account<'info, OracleAccount>,
 
@@ -52,7 +51,7 @@ pub struct CreateOracle<'info> {
     #[account(mut)]
     pub nft_owner: UncheckedAccount<'info>,
     /// CHECK: safe
-    #[account(mut)]
+    #[account(mut)] // not mutable
     pub nft_address: UncheckedAccount<'info>,
 
     pub system_program: Program<'info, System>

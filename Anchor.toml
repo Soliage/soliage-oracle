@@ -2,14 +2,14 @@
 seeds = false
 skip-lint = false
 [programs.localnet]
-soliage = "CQ9sBC6dELeBFPtRLS3YM9Zw6K91xDG1drnxzcYG9uYS"
+soliage = "JCrKhCHMnwwgGByjDntnADS7zmo22petbVYwumn8s2xf"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
 cluster = "Localnet"
-wallet = "~/.config/solana/soliage-dev.json"
+wallet = "./.keys/oracle_dev.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

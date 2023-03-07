@@ -14,4 +14,4 @@ Quickstart:
 `anchor build`
 `anchor deploy`
 
-Launched at CQ9sBC6dELeBFPtRLS3YM9Zw6K91xDG1drnxzcYG9uYS
+Launched with Program Id: `JCrKhCHMnwwgGByjDntnADS7zmo22petbVYwumn8s2xf`
