@@ -12,5 +12,6 @@ The test shows what calls are made.
 Quickstart:  
 `yarn install`
 `anchor build`
+`anchor deploy`
 
 Launched at CQ9sBC6dELeBFPtRLS3YM9Zw6K91xDG1drnxzcYG9uYS
