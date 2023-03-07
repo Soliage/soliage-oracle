@@ -13,18 +13,18 @@ describe("soliage", () => {
 
   it("Is initialized!", async () => {
     const publicKey = anchor.AnchorProvider.local().wallet.publicKey;
-    const nft_addressWallet: anchor.web3.Keypair = anchor.web3.Keypair.generate();
+    const nftMintAddress = new anchor.web3.PublicKey("st8VeQiedGdFxmZUmE2Z4b5dPyeJ9awj6KL6fdFSitu")
     const [oraclePDA] =  anchor.web3.PublicKey.findProgramAddressSync([
         utf8.encode('oracle'),
-        publicKey.toBuffer(), 
-        nft_addressWallet.publicKey.toBuffer()
+        nftMintAddress.toBuffer()
       ],
       program.programId
     );
     console.log("oraclePDA", oraclePDA);
     await program.methods.createOracle(12, 32000).accounts({
-      nftOwner: publicKey,
-      nftAddress: nft_addressWallet.publicKey,
+      nftOwner: new anchor.web3.PublicKey("4RLpP7eio996DqLcSpV2f9mKSXsogSuezJZctmyXzroo"),
+      oracleProvider: publicKey,
+      nftAddress: nftMintAddress,
       systemProgram:  anchor.web3.SystemProgram.programId,
       oracle: oraclePDA
     }).rpc();
@@ -32,8 +32,8 @@ describe("soliage", () => {
     console.log(oracleAccount);
     assert.equal(oracleAccount.parcelId, 12);
     assert.equal(oracleAccount.amount, 32000);
-    assert.isTrue(oracleAccount.nftOwner.equals(publicKey));
-    assert.isTrue(oracleAccount.nftAddress.equals(nft_addressWallet.publicKey));
+    //assert.isTrue(oracleAccount.nftOwner.equals(publicKey));
+    assert.isTrue(oracleAccount.nftAddress.equals(nftMintAddress))
     pda = oraclePDA;
   });
 

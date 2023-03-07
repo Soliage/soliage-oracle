@@ -35,15 +35,22 @@ pub mod soliage {
 pub struct CreateOracle<'info> {
     #[account(
         init,
-        seeds = [b"oracle".as_ref(), nft_owner.key().as_ref(), nft_address.key().as_ref()],
+        seeds = [b"oracle".as_ref(), 
+        nft_address.key().as_ref()],
         bump,
-        payer = nft_owner,
-        space = 8 + size_of::<OracleAccount>()
+        payer = oracle_provider,
+        space = 16 + size_of::<OracleAccount>()
     )]
     pub oracle: Account<'info, OracleAccount>,
 
+
     #[account(mut)]
-    pub nft_owner: Signer<'info>,
+    pub oracle_provider: Signer<'info>,
+
+
+    /// CHECK: safe
+    #[account(mut)]
+    pub nft_owner: UncheckedAccount<'info>,
     /// CHECK: safe
     #[account(mut)]
     pub nft_address: UncheckedAccount<'info>,
@@ -60,6 +67,7 @@ pub struct UpdateOracle<'info> {
 #[account]
 pub struct OracleAccount {
     pub nft_owner: Pubkey,
+    pub oracle_provider: Pubkey,
     pub nft_address: Pubkey,
     pub amount: u32,
     pub parcel_id: u32,
