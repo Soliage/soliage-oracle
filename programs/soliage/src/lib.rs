@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use std::mem::size_of;
 
-declare_id!("6TcPqJ4w8vNz5SvbfZss5BtjFGstT9X1KjRxqdD5RQwc");
+declare_id!("CQ9sBC6dELeBFPtRLS3YM9Zw6K91xDG1drnxzcYG9uYS");
 
 #[program]
 pub mod soliage {
