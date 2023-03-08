@@ -2,7 +2,7 @@
 seeds = false
 skip-lint = false
 [programs.localnet]
-soliage = "JCrKhCHMnwwgGByjDntnADS7zmo22petbVYwumn8s2xf"
+soliage = "6TcPqJ4w8vNz5SvbfZss5BtjFGstT9X1KjRxqdD5RQwc"
 
 [registry]
 url = "https://api.apr.dev"
