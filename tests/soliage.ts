@@ -1,25 +1,43 @@
 import * as anchor from "@project-serum/anchor";
-import { Program } from "@project-serum/anchor";
 import { utf8 } from "@project-serum/anchor/dist/cjs/utils/bytes";
 import { BN } from "bn.js";
 import { assert } from "chai";
-import { Soliage } from "../target/types/soliage";
 import fs from "fs";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import {
   cotMintAddress,
-  //parcelMintAddress,
   program,
   findCotMintAuthorityPDA
 } from "../scripts/config"
 import { User } from "./user";
 import { createMints } from "../scripts/create-mints";
 import { TokenHelper } from "./token_helper";
+import {  PublicKey } from '@solana/web3.js';
 
 // @ts-ignore
 const parcelData = JSON.parse(fs.readFileSync(".keys/steward_dev.json"));
 const steward = anchor.web3.Keypair.fromSecretKey(new Uint8Array(parcelData)).publicKey;
 const nftMintAddress = new anchor.web3.PublicKey("4zQYVjemiCUb9RxENk2g8EncrTm97BND2z4DiDahA3UM");
+
+/* 
+const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID: PublicKey = new PublicKey(
+  'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
+);
+
+async function findAssociatedTokenAddress(
+    walletAddress: PublicKey,
+    tokenMintAddress: PublicKey
+): Promise<PublicKey> {
+    return (await PublicKey.findProgramAddress(
+        [
+            walletAddress.toBuffer(),
+            TOKEN_PROGRAM_ID.toBuffer(),
+            tokenMintAddress.toBuffer(),
+        ],
+        SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
+    ))[0];
+}
+ */
 
 describe("soliage", () => {
   //anchor.setProvider(anchor.AnchorProvider.env());
@@ -71,11 +89,14 @@ describe("soliage", () => {
 
   it("Is updated!", async () => {
     // 0. Prepare Token Bags
-    const user =  new User();
-    await user.getOrCreateCotTokenBag();
+    const myTokenHelper = new TokenHelper(cotMintAddress);
+    const stewardTokenBag = await myTokenHelper.getOrCreateTokenBag(
+      steward,
+      false
+    );
+    console.log(`Steward token address for COT: ${stewardTokenBag.address}`)
 
     // 1. Get current stake amount
-    const userCots = await user.cotBalance();
 
     // For the MINT
     const [cotPDA, cotPDABump] = await findCotMintAuthorityPDA();
@@ -84,13 +105,14 @@ describe("soliage", () => {
       oracle: pda,
       // Solana is lost: where are my spl program friends?
       tokenProgram: TOKEN_PROGRAM_ID,
-
+      nftOwner: steward,
       // **************
       // MINTING 🥩 TO USERS
       // **************
       cotMint: cotMintAddress,
       cotMintAuthority: cotPDA,
-      userCotTokenBag: user.cotTokenBag,
+      //userCotTokenBag: user.cotTokenBag,
+      userCotTokenBag: stewardTokenBag.address,
 
     }).rpc();
 

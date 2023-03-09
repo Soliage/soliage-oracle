@@ -38,6 +38,10 @@ pub mod soliage {
         // Get Oracle Account from context
         let oracle = &mut ctx.accounts.oracle;
         oracle.amount = amount;
+
+        // update the NFT Owner -- todo: read from chain
+        oracle.nft_owner = ctx.accounts.nft_owner.key();
+
         // get the time and compare it to the last time
         let clock: u64 = clock::Clock::get()?.unix_timestamp.try_into().unwrap();
         let delta = clock - oracle.timestamp;
@@ -66,10 +70,6 @@ pub mod soliage {
             &signer
         );
         token::mint_to(cpi_ctx, cot_amount)?;
-
-        // determine if the COT token account already exists for the NFT holder
-
-        // mint the correct amount of COT into the NFT holder's account
         
         Ok(())
     }
@@ -108,6 +108,9 @@ pub struct UpdateOracle<'info> {
     pub token_program: Program<'info, Token>,
     #[account(mut)]
     pub oracle: Account<'info, OracleAccount>,
+    /// CHECK: safe
+    #[account(mut)]
+    pub nft_owner: UncheckedAccount<'info>,
     // Address of the cot mint 🏭
     #[account(
         mut,

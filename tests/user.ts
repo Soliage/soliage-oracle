@@ -1,5 +1,5 @@
 import {  PublicKey } from '@solana/web3.js';
-import { parcelMintAddress, cotMintAddress, userWallet } from "../scripts/config"
+import { cotMintAddress, userWallet } from "../scripts/config"
 import { TokenHelper } from "./token_helper";
 import { Wallet } from "@project-serum/anchor";
 
@@ -12,9 +12,8 @@ class User {
     wallet: Wallet;
 
     constructor(wallet = userWallet) {
-        this.parcelToken = new TokenHelper(parcelMintAddress);
         this.cotToken = new TokenHelper(cotMintAddress);
-        this.wallet = wallet;
+        this.wallet = wallet as Wallet; //check
     }
 
     getOrCreateParcelTokenBag = async () => {
