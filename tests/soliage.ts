@@ -17,32 +17,12 @@ import {  PublicKey } from '@solana/web3.js';
 // @ts-ignore
 const parcelData = JSON.parse(fs.readFileSync(".keys/steward_dev.json"));
 const steward = anchor.web3.Keypair.fromSecretKey(new Uint8Array(parcelData)).publicKey;
+// to-do: replace this hard-coded address of the first NFT with code
+// not a problem now since we explicitly keep the NFT owner anyway
 const nftMintAddress = new anchor.web3.PublicKey("4zQYVjemiCUb9RxENk2g8EncrTm97BND2z4DiDahA3UM");
 
-/* 
-const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID: PublicKey = new PublicKey(
-  'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
-);
-
-async function findAssociatedTokenAddress(
-    walletAddress: PublicKey,
-    tokenMintAddress: PublicKey
-): Promise<PublicKey> {
-    return (await PublicKey.findProgramAddress(
-        [
-            walletAddress.toBuffer(),
-            TOKEN_PROGRAM_ID.toBuffer(),
-            tokenMintAddress.toBuffer(),
-        ],
-        SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
-    ))[0];
-}
- */
-
 describe("soliage", () => {
-  //anchor.setProvider(anchor.AnchorProvider.env());
-
-  //const program = anchor.workspace.Soliage as Program<Soliage>;
+  // remember this for the next test
   let pda: anchor.web3.PublicKey;
 
   before(async () => {
@@ -103,15 +83,13 @@ describe("soliage", () => {
     // for updating, we pass the new values (as params) and the storage location (PDA - as accounts)
     await program.methods.update(cotPDABump ,32006).accounts({
       oracle: pda,
-      // Solana is lost: where are my spl program friends?
       tokenProgram: TOKEN_PROGRAM_ID,
       nftOwner: steward,
       // **************
-      // MINTING 🥩 TO USERS
+      // MINTING $COT TO USERS
       // **************
       cotMint: cotMintAddress,
       cotMintAuthority: cotPDA,
-      //userCotTokenBag: user.cotTokenBag,
       userCotTokenBag: stewardTokenBag.address,
 
     }).rpc();

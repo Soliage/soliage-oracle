@@ -3,7 +3,7 @@ use anchor_spl::token::{self, Mint, Token, TokenAccount};
 use std::convert::TryInto;
 use std::mem::size_of;
 
-
+// This ID needs to be the one displayed when you run "anchor deploy"
 declare_id!("6TcPqJ4w8vNz5SvbfZss5BtjFGstT9X1KjRxqdD5RQwc");
 
 #[program]
@@ -32,6 +32,8 @@ pub mod soliage {
         msg!("Timestamp: {}", clock);
         Ok(())
     }
+    // The update function registers a new value for the forest quality and pays out
+    // the correct amount of COT to the owner of the land parcel NFT
     pub fn update(ctx: Context<UpdateOracle>,         
             cot_mint_authority_bump: u8,
             amount: u32) -> Result<()> {
@@ -49,17 +51,11 @@ pub mod soliage {
         msg!("Delta: {}", delta);
         // determine how much COT NFT holders should get
         let cot_amount = (delta as u64) * (amount as u64) * 100000000; // 1 COT per second per green percentage point
-        // We know that:
-        //                                  findPDA(programId + seed)
-        // cotMintPDA, cotMintPDABump = findPDA(programId + cotMint.address)
-
-        // -> So signer can be found using:
-        // findPDA(programId + seed)              = X + bump
-        // findPDA(programId + cotMintAddress)  = X + bump
+        // obtain signer for minting COT
         let cot_mint_address= ctx.accounts.cot_mint.key();
         let seeds = &[cot_mint_address.as_ref(), &[cot_mint_authority_bump]];
         let signer = [&seeds[..]];
-
+        // prepare a context for calling the token::MintTo program
         let cpi_ctx = CpiContext::new_with_signer(
             ctx.accounts.token_program.to_account_info(),
             token::MintTo {
@@ -69,6 +65,7 @@ pub mod soliage {
             },
             &signer
         );
+        // call the token::MintTo program
         token::mint_to(cpi_ctx, cot_amount)?;
         
         Ok(())
@@ -95,7 +92,7 @@ pub struct CreateOracle<'info> {
     #[account(mut)]
     pub nft_owner: UncheckedAccount<'info>,
     /// CHECK: safe
-    #[account(mut)] // not mutable
+    #[account(mut)]
     pub nft_address: UncheckedAccount<'info>,
 
     pub system_program: Program<'info, System>
