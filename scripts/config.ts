@@ -10,6 +10,24 @@ const program = anchor.workspace.Soliage as Program<Soliage>;
 const connection = anchor.getProvider().connection;
 const userWallet = anchor.AnchorProvider.local().wallet;
 
+interface Record {
+    id: number;
+    mintAddress: string;
+    tokenAccount: string;
+    owner: string;
+  }
+  
+const readJsonFile = (filePath: string): Record[] => {
+    const data = fs.readFileSync(filePath, { encoding: 'utf8' });
+    return JSON.parse(data);
+};
+
+const records = readJsonFile('./data/tokens.json');
+
+// for testing, we only need one NFT
+const nftMintAddress = new anchor.web3.PublicKey(records[0].mintAddress);
+
+
 const randomPayer = async (lamports = LAMPORTS_PER_SOL) => {
     const wallet = Keypair.generate();
     const signature = await connection.requestAirdrop(wallet.publicKey, lamports);
@@ -45,4 +63,5 @@ export {
     cotMintKeypair,
     cotMintAddress,
     findCotMintAuthorityPDA,
+    nftMintAddress,
 }

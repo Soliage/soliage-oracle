@@ -6,6 +6,7 @@ import fs from "fs";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import {
   cotMintAddress,
+  nftMintAddress,
   program,
   findCotMintAuthorityPDA
 } from "../scripts/config"
@@ -17,9 +18,6 @@ import {  PublicKey } from '@solana/web3.js';
 // @ts-ignore
 const parcelData = JSON.parse(fs.readFileSync(".keys/steward_dev.json"));
 const steward = anchor.web3.Keypair.fromSecretKey(new Uint8Array(parcelData)).publicKey;
-// to-do: replace this hard-coded address of the first NFT with code
-// not a problem now since we explicitly keep the NFT owner anyway
-const nftMintAddress = new anchor.web3.PublicKey("4zQYVjemiCUb9RxENk2g8EncrTm97BND2z4DiDahA3UM");
 
 describe("soliage", () => {
   // remember this for the next test
